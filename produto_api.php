@@ -68,6 +68,49 @@
                     }
             }
 
+        case 'PATCH':
+            if(!isset($_GET["id"])){
+                http_response_code(400);
+                    echo json_encode(["error" => "Informe o iD do produto"]);
+                }else{
+                    $id = $_GET['id'];
+    
+                    $prodExist = $produtos -> findById($id);
+                    
+                    if(!$prodExist){
+                        http_response_code(400);
+                        echo json_encode(["error" => "Produto não encontrado!"]);
+                    }else{
+                        $dadosAtt = ['descri' => $input['descri'] ?? $prodExist[0]['descri'],
+                                     'preco' => $input['preco'] ?? $prodExist[0]['preco']];
+       
+                        $prodAtt = $produtos -> update($id, $dadosAtt);
+                        if($prodAtt){
+                            http_response_code(200);
+                            echo json_encode(["message" => "Produto atualizado com sucesso!"]);
+                        }else{Http_response_code(404);
+                            echo json_encode(["error" => "Produto não encontrado!"]);
+                        }
+                    }
+                }
+                break;
+        case 'DELETE':
+                if(!isset($_GET["id"])){
+                    http_response_code(400);
+                    echo json_encode(["error" => "Informe o iD do produto"]);
+                }
+                else{
+                    $id = $_GET['id'];
+                    $prodDel = $produtos -> delete($id);
+                    if($prodDel){
+                        http_response_code(200);
+                        echo json_encode(["message" => "Produto deletado com sucesso!"]);
+                    }else{
+                        http_response_code(404);
+                        echo json_encode(["error" => "Produto não encontrado!"]);
+                    }
+                }
+                break;      
         default:
             $codigo = 405;
             http_response_code($codigo);
